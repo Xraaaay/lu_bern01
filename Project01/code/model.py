@@ -51,6 +51,13 @@ class Model:
         phi[r >= self.sigma1] = 0
         return phi
 
+    def _cal_energy_for_one_particle(self, i, x_i, y_i):
+        x, y = self.r_N.T
+        dx = x_i - x[np.arange(len(x)) != i]
+        dy = y_i - y[np.arange(len(y)) != i]
+        phi = self._cal_pair_energy(dx, dy)
+        return np.sum(phi)
+
     def cal_total_energy(self):
         total_U = 0
         x, y = self.r_N.T
@@ -62,17 +69,11 @@ class Model:
         return total_U
 
     def cal_delta_energy(self, i, dr):
-        x, y = self.r_N.T
         x0, y0 = self.r_N[i]
-        dx = x0 - x[np.arange(len(x)) != i]
-        dy = y0 - y[np.arange(len(y)) != i]
-        phi0 = self._cal_pair_energy(dx, dy)
-
+        phi0 = self._cal_energy_for_one_particle(i, x0, y0)
         x1, y1 = self.r_N[i] + dr
-        dx = x1 - x[np.arange(len(x)) != i]
-        dy = y1 - y[np.arange(len(y)) != i]
-        phi = self._cal_pair_energy(dx, dy)
-        return np.sum(phi) - np.sum(phi0)
+        phi1 = self._cal_energy_for_one_particle(i, x1, y1)
+        return phi1 - phi0
 
     def select_particle(self, i):
         return self.r_N[i]
