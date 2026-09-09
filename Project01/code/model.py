@@ -79,5 +79,6 @@ class Model:
         return self.r_N[i]
 
     def move_particle(self, i, dr, dU):
-        self.r_N[i] = self.r_N[i] + dr
+        # TODO: use an object containing (i, dr, dU)
+        self.r_N[i] = (self.r_N[i] + dr) % self.L
         self.U = self.U + dU
