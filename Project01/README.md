@@ -14,7 +14,7 @@
 
 ### Monte Carlo
 
-Random Variable $X$ follows a PDF $P(x)$. For a function $R(x)$, we can do the **importance sampling**. The expectation: $$<R> = \frac{1}{N} \sum_{i=1}^N R(x_i)$$, where $x_i$ is the $i$th draw from $P(x)$.
+Random Variable $X$ follows a PDF $P(x)$. For a function $R(x)$, we can do the **importance sampling**. The expectation: $$\langle R \rangle = \frac{1}{N} \sum_{i=1}^N R(x_i)$$, where $x_i$ is the $i$th draw from $P(x)$.
 
 ### Markov Chain (TBD)
 
@@ -48,4 +48,4 @@ Boltzmann Distribution: $$P_B(\boldsymbol{r}^N) = \frac{1}{Z} e^{-\beta U(\bolds
 
 The interaction energy: $$U(\boldsymbol{r}^N) = \sum_{i=1}^{N-1} \sum_{j=i+1}^{N} \Phi (\boldsymbol{r}_i, \boldsymbol{r}_j)$$
 
-By importance Monte Carlo sampling, we can estimate the average for the interaction energy: $$<U> = \frac{1}{M} \sum_{i=1}^M U(\boldsymbol{r}_i^N)$$
+By importance Monte Carlo sampling, we can estimate the average for the interaction energy: $$\langle U \rangle = \frac{1}{M} \sum_{i=1}^M U(\boldsymbol{r}_i^N)$$
