@@ -4,34 +4,50 @@ Created on 2026-09-11
 @author: Ruowen Xiao
 """
 
+import ioutil
 import math
-import matplotlib.pyplot as plt
 import mcmc
 import numpy as np
+import time
 from model import Model
 
+# Settings
 rho_star = 0.291
 T_stars = [x / 100 for x in range(25, 14, -1)]
-N = 1000
+N = 100
 L = math.sqrt(N / rho_star)
-r_N = None
+r_N = np.array([])
 
 n_equilibrium_runs = 10**6
 n_production_runs = 10**7
 step = 1000
 
-def run_mcmc(n_runs, model, delta):
-    U = []
-    for i in range(n_runs):
-        mcmc.mcmc_step(delta, model)
-        if i % step == 0:
-            U.append(model.U)
-    return U
-
+# Run mcmc
 for T_star in T_stars:
-    model = Model(T_star, L, N, r_N)
-    delta = 0.3  # TODO: acceptance ration 0.3
+    start_time = time.time()
+    print("====================")
+    print(f"rho_star = {rho_star}, T_star = {T_star}, N = {N}")
 
-    U_equi = run_mcmc(n_equilibrium_runs, model, delta)
-    U_prod = run_mcmc(n_production_runs, model, delta)
-    fluctuation = np.mean(np.square(U_prod)) - np.square(np.mean(U_prod))
+    model = Model(T_star, L, N, r_N)
+    delta = 0.3  # TODO: acceptance ratio 0.3
+
+    U_equi = mcmc.run_mcmc(n_equilibrium_runs, step, model, delta)
+    U_prod = mcmc.run_mcmc(n_production_runs, step, model, delta)
+
+    r_N = model.r_N
+
+    end_time = time.time()
+    print(f"time: {end_time - start_time}s")
+
+    dir_path = f"../output/temperature/T_{T_star}"
+    ioutil.save_ndarray(dir_path + "energy_equi.py", U_equi)
+    ioutil.save_ndarray(dir_path + "energy_prod.py", U_prod)
+    ioutil.save_ndarray(dir_path + "final_config.py", model.r_N)
+    ioutil.save_json(dir_path + "metadata.json", 
+                     rho_star=rho_star, 
+                     T_star=T_star, 
+                     N=N, 
+                     n_equilibrium_runs=n_equilibrium_runs,
+                     n_production_runs=n_production_runs,
+                     step=step, 
+                     delta=delta)
