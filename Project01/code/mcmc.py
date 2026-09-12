@@ -55,7 +55,7 @@ def tune_delta(model: Model, delta_init):
         print(f"acceptance ratio: {acceptance_ratio}, delta: {delta}")
         if acceptance_ratio > 0.7:
             delta *= 1.5
-        elif acceptance_ratio > 0.4:
+        elif acceptance_ratio > 0.35:
             delta *= 1.2
         elif acceptance_ratio < 0.15:
             delta *= 0.7
