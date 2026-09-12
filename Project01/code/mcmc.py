@@ -48,13 +48,19 @@ def run_mcmc(n_runs, sample_interval, model: Model, delta):
 
 def tune_delta(model: Model, delta_init):
     window_size = 10**5
-    n_windows = 5
+    max_windows = 20
     delta = delta_init
-    for _ in range(n_windows):
+    for _ in range(max_windows):
         _, acceptance_ratio = run_mcmc(window_size, window_size + 1, model, delta)
         print(f"acceptance ratio: {acceptance_ratio}, delta: {delta}")
-        if acceptance_ratio > 0.4:
-            delta = 1.1 * delta
+        if acceptance_ratio > 0.7:
+            delta *= 1.5
+        elif acceptance_ratio > 0.4:
+            delta *= 1.2
+        elif acceptance_ratio < 0.15:
+            delta *= 0.7
         elif acceptance_ratio < 0.25:
-            delta = 0.9 * delta
+            delta *= 0.9
+        else:
+            break
     return delta
