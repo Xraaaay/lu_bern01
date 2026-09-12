@@ -34,11 +34,27 @@ def mcmc_step(delta, model: Model):
     else:
         return False
 
-def run_mcmc(n_runs, step, model: Model, delta):
+def run_mcmc(n_runs, sample_interval, model: Model, delta):
     U = []
-    for i in range(n_runs):
-        mcmc_step(delta, model)
-        if i % step == 0:
+    acceptance_count = 0
+    for i in range(1, n_runs + 1):
+        is_accepted = mcmc_step(delta, model)
+        if is_accepted:
+            acceptance_count += 1
+        if i % sample_interval == 0:
             U.append(model.U)
-    return np.asarray(U)
+    acceptance_ratio = acceptance_count / n_runs
+    return np.asarray(U), acceptance_ratio
 
+def tune_delta(model: Model, delta_init):
+    window_size = 10**5
+    n_windows = 5
+    delta = delta_init
+    for _ in range(n_windows):
+        _, acceptance_ratio = run_mcmc(window_size, window_size + 1, model, delta)
+        print(f"acceptance ratio: {acceptance_ratio}, delta: {delta}")
+        if acceptance_ratio > 0.4:
+            delta = 1.1 * delta
+        elif acceptance_ratio < 0.25:
+            delta = 0.9 * delta
+    return delta
