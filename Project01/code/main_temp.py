@@ -20,7 +20,7 @@ r_N = np.array([])
 
 n_equi_runs = 2 * 10**6
 n_prod_runs = 2 * 10**7
-step = 1000
+sample_interval = 1000
 
 # Run mcmc
 for T_star in T_stars:
@@ -29,10 +29,14 @@ for T_star in T_stars:
     print(f"rho_star = {rho_star}, T_star = {T_star}, N = {N}")
 
     model = Model(T_star, L, N, r_N)
-    delta = 0.3  # TODO: acceptance ratio 0.3
+    delta_init = 0.3
 
-    U_equi = mcmc.run_mcmc(n_equi_runs, step, model, delta, is_equi=True)
-    U_prod = mcmc.run_mcmc(n_prod_runs, step, model, delta)
+    delta = mcmc.tune_delta(model, delta_init)
+    U_equi, acceptance_ratio_equi = mcmc.run_mcmc(n_equi_runs, sample_interval, model, delta)
+    print(f"acceptance raito in equilibrium: {acceptance_ratio_equi}")
+
+    U_prod, acceptance_ratio_prod = mcmc.run_mcmc(n_prod_runs, sample_interval, model, delta)
+    print(f"acceptance raito in production: {acceptance_ratio_prod}")
 
     r_N = model.r_N
 
@@ -49,5 +53,5 @@ for T_star in T_stars:
                      N=N, 
                      n_equilibrium_runs=n_equi_runs,
                      n_production_runs=n_prod_runs,
-                     step=step, 
+                     sample_interval=sample_interval, 
                      delta=delta)
