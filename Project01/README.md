@@ -2,13 +2,41 @@
 
 > Markov Chain Monte Carlo(MCMC) Based Modeling
 
-## Structure
+## Project Layout
 
-- `main.py`: setup, execution
+```text
+Project01/
+├── code/
+│   ├── __pycache__/
+│   ├── ioutil.py           # io utilities
+│   ├── main_density.py     # setup with different densities, run mcmc 
+│   ├── main_temp.py        # setup with different temperatures, run mcmc
+│   ├── mcmc.py             # Metropolis Monte Carlo sampling algorithm
+│   └── model.py            # 2D system class 
+├── docs/
+├── output/                 # output files: metadata, energy, configuration
+└── README.md
+```
 
-- `mcmc.py`: Monte Carlo sampling algorithm
+## Workflow
 
-- `model.py`: 2D system class
+Following commands below to install required denpendencies and run the simulations:
+
+```shell
+conda env create -f environment.yml
+python main_density.py
+python main_temp.py
+```
+
+## FAIR data principles
+
+- Findable: clear project layout, simulation outputs stored the in `output/` directory
+
+- Accessible: public github repository
+
+- Interoperable: simulation metadata stored in `output/*/*/metadata.json` using `json` format
+
+- Reusable: simulation metadata stored in `output/*/*/metadata.json` described with model attributes, MIT lisence
 
 ## Background
 
