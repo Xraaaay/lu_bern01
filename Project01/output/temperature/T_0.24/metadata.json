@@ -1,0 +1,9 @@
+{
+    "rho_star": 0.291,
+    "T_star": 0.24,
+    "N": 100,
+    "n_equilibrium_runs": 2000000,
+    "n_production_runs": 20000000,
+    "sample_interval": 1000,
+    "delta": 0.5184
+}
