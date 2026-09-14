@@ -12,8 +12,8 @@ class Model:
         self.T_star = T_star  # T_star = k * T / epsilon
         self.L = L  # length of box
         self.N = N  # number of particles
-        self.sigma0 = 1  # radius of hard core
-        self.sigma1 = 2.5 * self.sigma0  # radius of soft core
+        self.sigma0_sq = 1  # square of radius of hard core
+        self.sigma1_sq = 2.5  # square of radius of soft core
         self.r_N = r_N if r_N.size else self._cold_start()
         self.U = self.cal_total_energy()
 
@@ -44,11 +44,11 @@ class Model:
     def _cal_pair_energy(self, dx, dy):
         dx = dx - np.round(dx / self.L) * self.L
         dy = dy - np.round(dy / self.L) * self.L
-        r = np.sqrt(np.square(dx) + np.square(dy))
+        r_sq = np.square(dx) + np.square(dy)
 
-        phi = np.ones(r.shape)
-        phi[r <= self.sigma0] = np.inf
-        phi[r >= self.sigma1] = 0
+        phi = np.ones(r_sq.shape)
+        phi[r_sq <= self.sigma0_sq] = np.inf
+        phi[r_sq >= self.sigma1_sq] = 0
         return phi
 
     def _cal_energy_for_one_particle(self, i, x_i, y_i):
