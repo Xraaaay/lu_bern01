@@ -34,24 +34,29 @@ def mcmc_step(delta, model: Model):
     else:
         return False
 
-def run_mcmc(n_runs, sample_interval, model: Model, delta):
+def run_mcmc(n_runs, sample_interval_energy, sample_interval_config, model: Model, delta):
     U = []
+    configs = []
     acceptance_count = 0
     for i in range(1, n_runs + 1):
         is_accepted = mcmc_step(delta, model)
         if is_accepted:
             acceptance_count += 1
-        if i % sample_interval == 0:
+        if sample_interval_energy and i % sample_interval_energy == 0:
             U.append(model.U)
+        if sample_interval_config and i % sample_interval_config == 0:
+            configs.append(model.r_N.copy())
     acceptance_ratio = acceptance_count / n_runs
-    return U, acceptance_ratio
+    return U, configs, acceptance_ratio
 
 def tune_delta(model: Model, delta_init):
     window_size = 10**5
     max_windows = 20
     delta = delta_init
+    configs_tune = []
     for _ in range(max_windows):
-        _, acceptance_ratio = run_mcmc(window_size, window_size + 1, model, delta)
+        configs, _, acceptance_ratio = run_mcmc(window_size, None, 2 * 10**4, model, delta)
+        configs_tune.extend(configs)
         print(f"acceptance ratio: {acceptance_ratio}, delta: {delta}")
         if acceptance_ratio > 0.7:
             delta *= 1.5
@@ -63,4 +68,4 @@ def tune_delta(model: Model, delta_init):
             delta *= 0.9
         else:
             break
-    return delta
+    return delta, configs_tune

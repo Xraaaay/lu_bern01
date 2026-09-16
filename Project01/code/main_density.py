@@ -30,10 +30,14 @@ for rho_star in rho_stars:
     L = math.sqrt(N / rho_star)
     model = Model(T_star, L, N)
     delta_init = 0.3
+    config_init = [model.r_N.copy()]
 
-    delta = mcmc.tune_delta(model, delta_init)
-    U_equi, _ = mcmc.run_mcmc(n_equi_runs, sample_interval_energy, model, delta)
-    U_prod, _ = mcmc.run_mcmc(n_prod_runs, sample_interval_energy, model, delta)
+    delta, configs_tune = mcmc.tune_delta(model, delta_init)
+    U_equi, configs_equi, _ = mcmc.run_mcmc(n_equi_runs, sample_interval_energy, 
+                                            sample_interval_config, model, delta)
+    U_prod, configs_prod, _ = mcmc.run_mcmc(n_prod_runs, sample_interval_energy, 
+                                            sample_interval_config, model, delta)
+    configs = config_init + configs_tune + configs_equi + configs_prod
 
     end_time = time.time()
     print(f"time: {end_time - start_time}s")
@@ -41,6 +45,7 @@ for rho_star in rho_stars:
     dir_path = f"../output/density/rho_{rho_star}/"
     ioutil.save_ndarray(dir_path + "energy_equi.npy", np.asarray(U_equi))
     ioutil.save_ndarray(dir_path + "energy_prod.npy", np.asarray(U_prod))
+    ioutil.save_ndarray(dir_path + "configs.npy", configs)
     ioutil.save_ndarray(dir_path + "final_config.npy", model.r_N)
     ioutil.save_json(dir_path + "metadata.json", 
                      rho_star=rho_star, 
