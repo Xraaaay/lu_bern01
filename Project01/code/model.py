@@ -8,13 +8,13 @@ import math
 import numpy as np
 
 class Model:
-    def __init__(self, T_star, L, N, r_N=np.array([])) -> None:
+    def __init__(self, T_star, L, N) -> None:
         self.T_star = T_star  # T_star = k * T / epsilon
         self.L = L  # length of box
         self.N = N  # number of particles
         self.sigma0_sq = 1  # square of radius of hard core
         self.sigma1_sq = 2.5**2  # square of radius of soft core
-        self.r_N = r_N if r_N.size else self._cold_start()
+        self.r_N = self._cold_start()
         self.U = self.cal_total_energy()
 
     def _cold_start(self):

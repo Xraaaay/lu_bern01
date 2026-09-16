@@ -7,6 +7,7 @@ Created on 2026-09-06
 import ioutil
 import math
 import mcmc
+import numpy as np
 import time
 from model import Model
 
@@ -17,7 +18,8 @@ N = 100
 
 n_equi_runs = 2 * 10**6
 n_prod_runs = 2 * 10**7
-sample_interval = 1000
+sample_interval_energy = 1000
+sample_interval_config = 10**5
 
 # Run mcmc
 for rho_star in rho_stars:
@@ -30,18 +32,15 @@ for rho_star in rho_stars:
     delta_init = 0.3
 
     delta = mcmc.tune_delta(model, delta_init)
-    U_equi, acceptance_ratio_equi = mcmc.run_mcmc(n_equi_runs, sample_interval, model, delta)
-    print(f"acceptance raito in equilibrium: {acceptance_ratio_equi}")
-
-    U_prod, acceptance_ratio_prod = mcmc.run_mcmc(n_prod_runs, sample_interval, model, delta)
-    print(f"acceptance raito in production: {acceptance_ratio_prod}")
+    U_equi, _ = mcmc.run_mcmc(n_equi_runs, sample_interval_energy, model, delta)
+    U_prod, _ = mcmc.run_mcmc(n_prod_runs, sample_interval_energy, model, delta)
 
     end_time = time.time()
     print(f"time: {end_time - start_time}s")
 
     dir_path = f"../output/density/rho_{rho_star}/"
-    ioutil.save_ndarray(dir_path + "energy_equi.npy", U_equi)
-    ioutil.save_ndarray(dir_path + "energy_prod.npy", U_prod)
+    ioutil.save_ndarray(dir_path + "energy_equi.npy", np.asarray(U_equi))
+    ioutil.save_ndarray(dir_path + "energy_prod.npy", np.asarray(U_prod))
     ioutil.save_ndarray(dir_path + "final_config.npy", model.r_N)
     ioutil.save_json(dir_path + "metadata.json", 
                      rho_star=rho_star, 
@@ -49,5 +48,6 @@ for rho_star in rho_stars:
                      N=N, 
                      n_equilibrium_runs=n_equi_runs,
                      n_production_runs=n_prod_runs,
-                     sample_interval=sample_interval, 
+                     sample_interval_energy=sample_interval_energy, 
+                     sample_interval_config=sample_interval_config, 
                      delta=delta)

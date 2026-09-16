@@ -44,7 +44,7 @@ def run_mcmc(n_runs, sample_interval, model: Model, delta):
         if i % sample_interval == 0:
             U.append(model.U)
     acceptance_ratio = acceptance_count / n_runs
-    return np.asarray(U), acceptance_ratio
+    return U, acceptance_ratio
 
 def tune_delta(model: Model, delta_init):
     window_size = 10**5

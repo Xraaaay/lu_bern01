@@ -107,6 +107,7 @@ for result in temp_results:
 
 fig, ax = plt.subplots()
 ax.scatter(x, y)
+ax.grid()
 ax.set_xlabel(r"Temperature, $T^{\star}$")
 ax.set_ylabel(r"Specific heat, $C_V$")
 ax.set_title(r"Thermodynamic properties at density $\rho^{\star}$ = 0.291")
