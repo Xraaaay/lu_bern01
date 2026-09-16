@@ -22,6 +22,7 @@ delta = 0.3
 n_equi_runs = 2 * 10**6
 n_prod_runs = 2 * 10**7
 sample_interval_energy = 1000
+sample_interval_config = 10**5
 
 model = Model(T_star_init, L, N)
 
@@ -33,9 +34,12 @@ for T_star in T_stars:
 
     model.T_star = T_star
 
-    delta = mcmc.tune_delta(model, delta)
-    U_equi, _ = mcmc.run_mcmc(n_equi_runs, sample_interval_energy, model, delta)
-    U_prod, _ = mcmc.run_mcmc(n_prod_runs, sample_interval_energy, model, delta)
+    delta, configs_tune = mcmc.tune_delta(model, delta)
+    U_equi, configs_equi, _ = mcmc.run_mcmc(n_equi_runs, sample_interval_energy, 
+                                            sample_interval_config, model, delta)
+    U_prod, configs_prod, _ = mcmc.run_mcmc(n_prod_runs, sample_interval_energy, 
+                                            sample_interval_config, model, delta)
+    configs = configs_tune + configs_equi + configs_prod
 
     end_time = time.time()
     print(f"time: {end_time - start_time}s")
