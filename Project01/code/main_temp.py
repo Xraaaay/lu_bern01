@@ -47,6 +47,7 @@ for T_star in T_stars:
     dir_path = f"../output/temperature/T_{T_star}/"
     ioutil.save_ndarray(dir_path + "energy_equi.npy", np.asarray(U_equi))
     ioutil.save_ndarray(dir_path + "energy_prod.npy", np.asarray(U_prod))
+    ioutil.save_ndarray(dir_path + "configs.npy", configs)
     ioutil.save_ndarray(dir_path + "final_config.npy", model.r_N)
     ioutil.save_json(dir_path + "metadata.json", 
                      rho_star=rho_star, 
