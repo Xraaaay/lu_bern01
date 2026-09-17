@@ -36,8 +36,7 @@ def load_data(str_path, prefix):
     return results
 
 density_results = load_data("../output/density", "rho_")
-temp_results = []
-# temp_results = load_data("../output/temperature", "T_")
+temp_results = load_data("../output/temperature", "T_")
 
 # %% Define Common Functions: Energy, Configurations
 def draw_energy(results):
@@ -46,7 +45,7 @@ def draw_energy(results):
         U_prod = result["energy_prod"]
         T_star = result["metadata"]["T_star"]
         rho_star = result["metadata"]["rho_star"]
-        sample_interval = result["metadata"]["sample_interval"]
+        sample_interval = result["metadata"]["sample_interval_energy"]
 
         U = np.concatenate((U_equi, U_prod))
         steps = np.arange(U.size) * sample_interval
@@ -69,6 +68,40 @@ def draw_configs(results):
                      fr"$\rho^{{\star}} = {rho_star}$")
         plt.show()
 
+def draw_animation(results, path_template):
+    for result in results:
+        configs = result["configs"]
+        N = result["metadata"]["N"]
+        rho_star = result["metadata"]["rho_star"]
+        T_star = result["metadata"]["T_star"]
+        L = math.sqrt(N / rho_star)
+
+        fig, ax = plt.subplots()
+        scatter = ax.scatter(configs[0, :, 0], 
+                            configs[0, :, 1], 
+                            s=50)
+        ax.set_xlim(0, L)
+        ax.set_ylim(0, L)
+        ax.set_aspect("equal")
+
+        def update(i):
+            scatter.set_offsets(configs[i])
+            return scatter,
+
+        ani = animation.FuncAnimation(
+            fig,
+            update,
+            frames=len(configs),
+            interval=50,
+            blit=True
+        )
+
+        path = path_template.format(rho_star=rho_star, T_star=T_star)
+        ani.save(path, writer="pillow", fps=20)
+
+        # plt.close(fig)
+        # HTML(ani.to_jshtml())
+
 # %%
 # ================================================================================
 #                               VARIOUS DENSITIES
@@ -88,40 +121,8 @@ for result in density_results:
     rho_star = result["metadata"]["rho_star"]
 
 # %% Draw animation
-for result in density_results:
-    configs = result["configs"]
-    N = result["metadata"]["N"]
-    rho_star = result["metadata"]["rho_star"]
-    L = math.sqrt(N / rho_star)
-
-    fig, ax = plt.subplots()
-    scatter = ax.scatter(configs[0, :, 0], 
-                        configs[0, :, 1], 
-                        s=50)
-    ax.set_xlim(0, L)
-    ax.set_ylim(0, L)
-    ax.set_aspect("equal")
-
-    def update(i):
-        scatter.set_offsets(configs[i])
-        return scatter,
-
-    ani = animation.FuncAnimation(
-        fig,
-        update,
-        frames=len(configs),
-        interval=50,
-        blit=True
-    )
-
-    ani.save(
-        f"../output/density/gif/rho_{rho_star}.gif",
-        writer="pillow",
-        fps=20
-    )
-
-# plt.close(fig)
-# HTML(ani.to_jshtml())
+output_path = "../output/density/gif/rho_{rho_star}.gif"
+draw_animation(density_results, output_path)
 
 # %%
 # ================================================================================
@@ -153,5 +154,9 @@ ax.set_xlabel(r"Temperature, $T^{\star}$")
 ax.set_ylabel(r"Specific heat, $C_V$")
 ax.set_title(r"Thermodynamic properties at density $\rho^{\star}$ = 0.291")
 plt.show()
+
+# %% Draw animation
+output_path = "../output/temperature/gif/T_{T_star}.gif"
+draw_animation(temp_results, output_path)
 
 # %%
