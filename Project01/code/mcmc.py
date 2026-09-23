@@ -53,9 +53,12 @@ def tune_delta(model: Model, delta_init):
     window_size = 10**5
     max_windows = 20
     delta = delta_init
+    U_tune = []
     configs_tune = []
+
     for _ in range(max_windows):
-        configs, _, acceptance_ratio = run_mcmc(window_size, None, 2 * 10**4, model, delta)
+        U, configs, acceptance_ratio = run_mcmc(window_size, None, 2 * 10**4, model, delta)
+        U_tune.extend(U)
         configs_tune.extend(configs)
         print(f"acceptance ratio: {acceptance_ratio}, delta: {delta}")
         if acceptance_ratio > 0.7:
@@ -68,4 +71,4 @@ def tune_delta(model: Model, delta_init):
             delta *= 0.9
         else:
             break
-    return delta, configs_tune
+    return delta, U_tune, configs_tune

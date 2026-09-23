@@ -28,8 +28,7 @@ def load_data(str_path, prefix):
             metadata = json.load(f)
 
         results.append({
-            "energy_equi": np.load(data_dir / "energy_equi.npy"),
-            "energy_prod": np.load(data_dir / "energy_prod.npy"),
+            "energy": np.load(data_dir / "energy.npy"),
             "configs": np.load(data_dir / "configs.npy"),
             "final_config": np.load(data_dir / "final_config.npy"),
             "metadata": metadata
@@ -42,17 +41,18 @@ temp_results = load_data("../output/temperature", "T_")
 # %% Define Common Functions: Energy, Configurations
 def draw_energy(results):
     for result in results:
-        U_equi = result["energy_equi"]
-        U_prod = result["energy_prod"]
+        U = result["energy"]
         T_star = result["metadata"]["T_star"]
         rho_star = result["metadata"]["rho_star"]
+        n_prod_runs = result["metadata"]["n_production_runs"]
         sample_interval = result["metadata"]["sample_interval_energy"]
 
-        U = np.concatenate((U_equi, U_prod))
         steps = np.arange(U.size) * sample_interval
+        prod_start = U.size * sample_interval - n_prod_runs
 
         fig, ax = plt.subplots()
         ax.plot(steps, U)
+        ax.axvline(x=prod_start, linestyle="--")
         ax.set_title(fr"$T^{{\star}} = {T_star}$, "
                      fr"$\rho^{{\star}} = {rho_star}$")
         plt.show()
@@ -117,7 +117,7 @@ draw_configs(density_results)
 # %% Various Densities: Radial Distribution
 # TODO
 for result in density_results:
-    config = result["final_config"]
+    configs = result["configs"]
     T_star = result["metadata"]["T_star"]
     rho_star = result["metadata"]["rho_star"]
 
@@ -140,9 +140,15 @@ draw_configs(temp_results)
 x = []
 y = []
 for result in temp_results:
-    U = result["energy_prod"]
+    U = result["energy"]
     T_star = result["metadata"]["T_star"]
-    flunctuation = np.mean(np.square(U)) - np.square(np.mean(U))
+    n_prod_runs = result["metadata"]["n_production_runs"]
+    sample_interval = result["metadata"]["sample_interval_energy"]
+
+    sample_count = n_prod_runs // sample_interval
+    U_prod = U[-sample_count:]
+
+    flunctuation = np.mean(np.square(U_prod)) - np.square(np.mean(U_prod))
     Cv = flunctuation / T_star**2
 
     x.append(T_star)
