@@ -39,7 +39,7 @@ density_results = load_data("../output/density", "rho_")
 temp_results = load_data("../output/temperature", "T_")
 
 # %% Define Common Functions: Energy, Configurations
-def draw_energy(results):
+def draw_energy(results, path_template):
     for result in results:
         U = result["energy"]
         T_star = result["metadata"]["T_star"]
@@ -55,6 +55,10 @@ def draw_energy(results):
         ax.axvline(x=prod_start, linestyle="--")
         ax.set_title(fr"$T^{{\star}} = {T_star}$, "
                      fr"$\rho^{{\star}} = {rho_star}$")
+
+        path = path_template.format(rho_star=rho_star, T_star=T_star)
+        fig.savefig(path)
+
         plt.show()
 
 def draw_configs(results):
@@ -109,7 +113,8 @@ def draw_animation(results, path_template):
 # ================================================================================
 
 # %% Various Densities: Energy
-draw_energy(density_results)
+output_path = "../results/density/rho_{rho_star}/energy_rho_{rho_star}.png"
+draw_energy(density_results, output_path)
 
 # %% Various Densities: Configruations
 draw_configs(density_results)
@@ -122,7 +127,7 @@ for result in density_results:
     rho_star = result["metadata"]["rho_star"]
 
 # %% Draw animation
-output_path = "../output/density/gif/rho_{rho_star}.gif"
+output_path = "../results/density/rho_{rho_star}/config_rho_{rho_star}.gif"
 draw_animation(density_results, output_path)
 
 # %%
@@ -131,7 +136,8 @@ draw_animation(density_results, output_path)
 # ================================================================================
 
 # %% Temperature Drop: Energy
-draw_energy(temp_results)
+output_path = "../results/temperature/T_{T_star}/energy_T_{T_star}.png"
+draw_energy(temp_results, output_path)
 
 # %% Temperature Drop: Configurations
 draw_configs(temp_results)
@@ -160,10 +166,14 @@ ax.grid()
 ax.set_xlabel(r"Temperature, $T^{\star}$")
 ax.set_ylabel(r"Specific heat, $C_V$")
 ax.set_title(r"Thermodynamic properties at density $\rho^{\star}$ = 0.291")
+
+output_path = "../results/temperature/Cv.png"
+fig.savefig(output_path)
+
 plt.show()
 
 # %% Draw animation
-output_path = "../output/temperature/gif/T_{T_star}.gif"
+output_path = "../results/temperature/T_{T_star}/config_T_{T_star}.gif"
 draw_animation(temp_results, output_path)
 
 # %%

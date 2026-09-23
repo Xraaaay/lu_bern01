@@ -6,5 +6,5 @@
     "n_production_runs": 20000000,
     "sample_interval_energy": 1000,
     "sample_interval_config": 100000,
-    "delta": 2.0155391999999996
+    "delta": 2.4186470399999993
 }
