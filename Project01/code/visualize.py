@@ -67,11 +67,11 @@ def draw_configs(results, path_template):
         T_star = result["metadata"]["T_star"]
         rho_star = result["metadata"]["rho_star"]
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(4, 4))
         ax.scatter(*config.T)
         ax.set_title(fr"$T^{{\star}} = {T_star}$, "
                      fr"$\rho^{{\star}} = {rho_star}$")
-        ax.set_aspect("equal")
+        ax.set_box_aspect(1)
 
         path = path_template.format(rho_star=rho_star, T_star=T_star)
         fig.savefig(path, dpi=300, bbox_inches="tight", pad_inches=0.02)
@@ -221,9 +221,35 @@ ax.scatter(x, y)
 ax.grid()
 ax.set_xlabel(r"Temperature, $T^{\star}$")
 ax.set_ylabel(r"Specific heat, $C_V$")
-ax.set_title(r"Thermodynamic properties at density $\rho^{\star}$ = 0.291")
+# ax.set_title(r"Thermodynamic properties at density $\rho^{\star}$ = 0.291")
 
 output_path = "../results/temperature/Cv.png"
+fig.savefig(output_path, dpi=300, bbox_inches="tight", pad_inches=0.02)
+
+plt.show()
+
+# %% Temperature Drop: Expected Energy
+x = []
+y = []
+for result in temp_results:
+    U = result["energy"]
+    T_star = result["metadata"]["T_star"]
+    n_prod_runs = result["metadata"]["n_production_runs"]
+    sample_interval = result["metadata"]["sample_interval_energy"]
+
+    sample_count = n_prod_runs // sample_interval
+    U_prod = U[-sample_count:]
+
+    x.append(T_star)
+    y.append(np.mean(U_prod))
+
+fig, ax = plt.subplots()
+ax.scatter(x, y)
+ax.grid()
+ax.set_xlabel(r"Temperature, $T^{\star}$")
+ax.set_ylabel(r"$U$")
+
+output_path = "../results/temperature/energy.png"
 fig.savefig(output_path, dpi=300, bbox_inches="tight", pad_inches=0.02)
 
 plt.show()
