@@ -61,7 +61,7 @@ def draw_energy(results, path_template):
 
         plt.show()
 
-def draw_configs(results):
+def draw_configs(results, path_template):
     for result in results:
         config = result["final_config"]
         T_star = result["metadata"]["T_star"]
@@ -71,6 +71,10 @@ def draw_configs(results):
         ax.scatter(*config.T)
         ax.set_title(fr"$T^{{\star}} = {T_star}$, "
                      fr"$\rho^{{\star}} = {rho_star}$")
+
+        path = path_template.format(rho_star=rho_star, T_star=T_star)
+        fig.savefig(path)
+
         plt.show()
 
 def draw_animation(results, path_template):
@@ -147,7 +151,8 @@ output_path = "../results/density/rho_{rho_star}/energy_rho_{rho_star}.png"
 draw_energy(density_results, output_path)
 
 # %% Various Densities: Configruations
-draw_configs(density_results)
+output_path = "../results/density/rho_{rho_star}/config_rho_{rho_star}.png"
+draw_configs(density_results, output_path)
 
 # %% Various Densities: Radial Distribution
 for result in density_results:
@@ -189,7 +194,8 @@ output_path = "../results/temperature/T_{T_star}/energy_T_{T_star}.png"
 draw_energy(temp_results, output_path)
 
 # %% Temperature Drop: Configurations
-draw_configs(temp_results)
+output_path = "../results/temperature/T_{T_star}/config_T_{T_star}.png"
+draw_configs(temp_results, output_path)
 
 # %% Temperature Drop: Phase Transition
 x = []
