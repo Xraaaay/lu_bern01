@@ -71,6 +71,7 @@ def draw_configs(results, path_template):
         ax.scatter(*config.T)
         ax.set_title(fr"$T^{{\star}} = {T_star}$, "
                      fr"$\rho^{{\star}} = {rho_star}$")
+        ax.set_aspect("equal")
 
         path = path_template.format(rho_star=rho_star, T_star=T_star)
         fig.savefig(path)
