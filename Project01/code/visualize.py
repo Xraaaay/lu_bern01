@@ -10,6 +10,7 @@ import matplotlib.animation as animation
 import math
 import numpy as np
 import json
+
 from IPython.display import HTML
 from pathlib import Path
 
