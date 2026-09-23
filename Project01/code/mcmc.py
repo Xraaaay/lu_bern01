@@ -10,7 +10,6 @@ import random
 from model import Model
 
 def proposal(delta, model: Model):
-    # TODO: add occasional attempts
     i = random.randint(0, model.N - 1)
     dx = delta * (random.random() - 0.5)
     dy = delta * (random.random() - 0.5)

@@ -107,6 +107,36 @@ def draw_animation(results, path_template):
         # plt.close(fig)
         # HTML(ani.to_jshtml())
 
+def radial_dist(configs: np.ndarray, L, dr=0.1):
+    n_configs, n_particles, _ = configs.shape
+    r_max = L / 2
+    bins = np.arange(0, r_max + dr, dr)
+    counts = np.zeros(len(bins) - 1)
+
+    i, j = np.triu_indices(n_particles, k=1)  # i < j
+    for config in configs:
+        delta = config[:, None, :] - config[None, :, :]
+        delta -= L * np.round(delta / L)  # PBC
+
+        distances = np.linalg.norm(delta, axis=-1)
+        pair_distances = distances[i, j]
+
+        hist, _ = np.histogram(pair_distances, bins=bins)
+        counts += hist
+
+    shell_area = np.pi * (np.square(bins[1:]) - np.square(bins[:-1]))
+    expected_counts = (
+        n_configs 
+        * n_particles * (n_particles - 1) / 2 
+        * shell_area / L**2
+    )
+
+    g_r = counts / expected_counts
+    r = (bins[1:] + bins[:-1]) / 2
+
+    return r, g_r
+
+
 # %%
 # ================================================================================
 #                               VARIOUS DENSITIES
@@ -120,11 +150,30 @@ draw_energy(density_results, output_path)
 draw_configs(density_results)
 
 # %% Various Densities: Radial Distribution
-# TODO
 for result in density_results:
     configs = result["configs"]
+    N = result["metadata"]["N"]
     T_star = result["metadata"]["T_star"]
     rho_star = result["metadata"]["rho_star"]
+    n_prod_runs = result["metadata"]["n_production_runs"]
+    sample_interval = result["metadata"]["sample_interval_energy"]
+
+    L = math.sqrt(N / rho_star)
+    sample_count = n_prod_runs // sample_interval
+    prod_configs = configs[-sample_count:]
+
+    r, g_r = radial_dist(prod_configs, L)
+
+    fig, ax = plt.subplots()
+    ax.plot(r, g_r)
+    ax.axvline(1, linestyle="--", color="gray")
+    ax.axvline(2.5, linestyle="--", color="gray")
+    ax.set_xlabel(r"$r$")
+    ax.set_ylabel(r"$g(r)$")
+
+    output_path = f"../results/density/rho_{rho_star}/gr_rho_{rho_star}.png"
+    fig.savefig(output_path)
+    plt.show()
 
 # %% Draw animation
 output_path = "../results/density/rho_{rho_star}/config_rho_{rho_star}.gif"
