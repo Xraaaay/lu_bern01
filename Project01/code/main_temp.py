@@ -33,13 +33,14 @@ for T_star in T_stars:
     print(f"rho_star = {rho_star}, T_star = {T_star}, N = {N}")
 
     model.T_star = T_star
+    config_init = [model.r_N.copy()]
 
     delta, configs_tune = mcmc.tune_delta(model, delta)
     U_equi, configs_equi, _ = mcmc.run_mcmc(n_equi_runs, sample_interval_energy, 
                                             sample_interval_config, model, delta)
     U_prod, configs_prod, _ = mcmc.run_mcmc(n_prod_runs, sample_interval_energy, 
                                             sample_interval_config, model, delta)
-    configs = configs_tune + configs_equi + configs_prod
+    configs = config_init + configs_tune + configs_equi + configs_prod
 
     end_time = time.time()
     print(f"time: {end_time - start_time}s")
