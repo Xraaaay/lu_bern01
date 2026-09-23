@@ -57,7 +57,7 @@ def draw_energy(results, path_template):
                      fr"$\rho^{{\star}} = {rho_star}$")
 
         path = path_template.format(rho_star=rho_star, T_star=T_star)
-        fig.savefig(path)
+        fig.savefig(path, dpi=300, bbox_inches="tight", pad_inches=0.02)
 
         plt.show()
 
@@ -74,7 +74,7 @@ def draw_configs(results, path_template):
         ax.set_aspect("equal")
 
         path = path_template.format(rho_star=rho_star, T_star=T_star)
-        fig.savefig(path)
+        fig.savefig(path, dpi=300, bbox_inches="tight", pad_inches=0.02)
 
         plt.show()
 
@@ -178,7 +178,7 @@ for result in density_results:
     ax.set_ylabel(r"$g(r)$")
 
     output_path = f"../results/density/rho_{rho_star}/gr_rho_{rho_star}.png"
-    fig.savefig(output_path)
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", pad_inches=0.02)
     plt.show()
 
 # %% Draw animation
@@ -224,7 +224,7 @@ ax.set_ylabel(r"Specific heat, $C_V$")
 ax.set_title(r"Thermodynamic properties at density $\rho^{\star}$ = 0.291")
 
 output_path = "../results/temperature/Cv.png"
-fig.savefig(output_path)
+fig.savefig(output_path, dpi=300, bbox_inches="tight", pad_inches=0.02)
 
 plt.show()
 
