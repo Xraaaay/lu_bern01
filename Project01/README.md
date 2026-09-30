@@ -8,13 +8,15 @@
 Project01/
 ├── code/
 │   ├── __pycache__/
-│   ├── ioutil.py           # io utilities
-│   ├── main_density.py     # setup with different densities, run mcmc 
-│   ├── main_temp.py        # setup with different temperatures, run mcmc
+│   ├── ioutil.py           # io utilities for persisting output to disk
+│   ├── main_density.py     # main entry point: setup with different densities, run simulation 
+│   ├── main_temp.py        # main entry point: setup with dropping temperatures, run simulation
 │   ├── mcmc.py             # Metropolis Monte Carlo sampling algorithm
-│   └── model.py            # 2D system class 
+│   └── model.py            # 2D system model 
+│   └── visualize.py        # visualize the output 
 ├── docs/
 ├── output/                 # output files: metadata, energy, configuration
+├── results/                # plots and animations generated from output
 └── README.md
 ```
 
@@ -23,9 +25,15 @@ Project01/
 Following commands below to install required denpendencies and run the simulations:
 
 ```shell
+# dependencies installation
 conda env create -f environment.yml
+
+# Monte Carlo simulation
 python main_density.py
 python main_temp.py
+
+# visualization (a recommended way is to run it in a Jupyter kernel)
+python visualize.py
 ```
 
 ## FAIR data principles
